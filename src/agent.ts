@@ -10,9 +10,10 @@
 
 import "dotenv/config"; // loads .env automatically
 import { ChatOllama }       from "@langchain/ollama";
-import { createReactAgent } from "langchain/agents";
+import { createReactAgent, AgentExecutor } from "langchain/agents";
+import { pull }             from "langchain/hub";
+import { PromptTemplate }   from "@langchain/core/prompts";
 import { DynamicTool }      from "@langchain/core/tools";
-import { HumanMessage }     from "@langchain/core/messages";
 import { query, closePool } from "./db";
 import * as readline        from "readline";
 
@@ -98,7 +99,9 @@ const tools = [
 //  The model thinks step-by-step, calls a tool, reads the result,
 //  then thinks again until it has a final answer.
 
-const agent = await createReactAgent({ llm, tools });
+const prompt = await pull<PromptTemplate>("hwchase17/react");
+const agent = await createReactAgent({ llm, tools, prompt });
+const agentExecutor = new AgentExecutor({ agent, tools });
 
 // ── 4. Interactive CLI loop ───────────────────────────────────
 
@@ -130,17 +133,9 @@ function ask(): void {
     try {
       console.log("\nAgent thinking...\n");
 
-      const result = await agent.invoke({
-        messages: [new HumanMessage(userInput)],
-      });
+      const result = await agentExecutor.invoke({ input: userInput });
 
-      // The last message in the array is the agent's final answer
-      const lastMessage = result.messages.at(-1);
-      const answer = typeof lastMessage?.content === "string"
-        ? lastMessage.content
-        : JSON.stringify(lastMessage?.content);
-
-      console.log(`Agent: ${answer}\n`);
+      console.log(`Agent: ${result.output}\n`);
     } catch (err: unknown) {
       console.error("Agent error:", (err as Error).message);
     }

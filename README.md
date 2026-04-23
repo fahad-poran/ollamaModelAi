@@ -3,7 +3,7 @@
 A fully local AI agent that queries your PostgreSQL database and answers questions using a local LLM. No cloud, no API keys, no data leaves your machine.
 
 ---
-
+![screenshot](Screenshot2026-04-23101007.png)
 ## What is inside
 
 ```
