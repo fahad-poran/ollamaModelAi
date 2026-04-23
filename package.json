@@ -1,0 +1,25 @@
+{
+  "name": "local-ai-agent",
+  "version": "1.0.0",
+  "description": "Local AI agent with Ollama + LangChain + PostgreSQL",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/agent.ts",
+    "rag":   "tsx src/rag.ts",
+    "seed":  "psql -U postgres -d postgres -f sql/seed.sql",
+    "chat":  "tsx src/chat.ts"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.3.0",
+    "@langchain/core":      "^0.3.0",
+    "@langchain/ollama":   "^0.1.0",
+    "langchain":           "^0.3.0",
+    "pg":                  "^8.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pg":   "^8.11.0",
+    "tsx":         "^4.19.0",
+    "typescript":  "^5.5.0"
+  }
+}
