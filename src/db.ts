@@ -14,7 +14,7 @@ const pool = new Pool({
   port:     Number(process.env.PG_PORT ?? 5432),
   database: process.env.PG_DATABASE ?? "postgres",
   user:     process.env.PG_USER     ?? "postgres",
-  password: process.env.PG_PASSWORD ?? "yourpassword",
+  password: process.env.PG_PASSWORD ?? "Hello123",
 });
 
 // Test the connection on first import
