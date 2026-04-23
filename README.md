@@ -362,7 +362,9 @@ You are running an old version of the scripts that used `ts-node`. The fix:
 ----------------------
 **Understanding the concept**
 
-[!concepts](langchain_role_diagram.png)
-```
-The simple way to think about it: Ollama is the engine, PostgreSQL is the data, and LangChain is the driver that knows how to use both together. Without LangChain you could still talk to Ollama directly (with fetch), but you'd have to write the tool-calling loop, prompt formatting, retrieval pipeline, and output parsing yourself — probably 300–400 lines of plumbing code that LangChain gives you for free.
-```
+![concepts](langchain_role_diagram.png)
+
+The simple way to think about it: 
+Ollama is the engine, PostgreSQL is the data, and LangChain is the driver that knows how to use both together. Without LangChain you could still talk to Ollama directly (with fetch), 
+but you'd have to write the tool-calling loop, prompt formatting, retrieval pipeline, 
+and output parsing yourself — probably 300–400 lines of plumbing code that LangChain gives you for free.
