@@ -1,44 +1,52 @@
 // src/db.ts
-// ──────────────────────────────────────────────────────────────
-//  Shared PostgreSQL client used by the agent tools and RAG pipeline.
-//  Uses the 'pg' library (no ORM — the agent writes raw SQL).
-// ──────────────────────────────────────────────────────────────
-
-import pg from "pg";
-
-const { Pool } = pg;
+import sql from "mssql";
 
 // Read connection details from .env
-const pool = new Pool({
-  host:     process.env.PG_HOST     ?? "localhost",
-  port:     Number(process.env.PG_PORT ?? 5432),
-  database: process.env.PG_DATABASE ?? "postgres",
-  user:     process.env.PG_USER     ?? "postgres",
-  password: process.env.PG_PASSWORD ?? "Hello123",
-});
+const config = {
+  server:     process.env.MSSQL_HOST     ?? "192.168.0.122",
+  port:       Number(process.env.MSSQL_PORT ?? 1433),
+  database:   process.env.MSSQL_DATABASE ?? "YunuscoERP",
+  user:       process.env.MSSQL_USER     ?? "sa",
+  password:   process.env.MSSQL_PASSWORD ?? "Hello123",
+  options: {
+    encrypt: true,
+    trustServerCertificate: true,
+    enableArithAbort: true,
+  },
+  connectionTimeout: 30000,
+  requestTimeout: 30000,
+};
 
-// Test the connection on first import
-pool.on("error", (err) => {
-  console.error("Unexpected PostgreSQL error:", err);
-});
+let pool = null;
 
-/**
- * Run any SQL string and return all rows as plain objects.
- * The agent calls this function via the "query_database" tool.
- */
-export async function query(sql: string): Promise<Record<string, unknown>[]> {
-  const client = await pool.connect();
+async function getPool() {
+  if (!pool) {
+    pool = await sql.connect(config);
+    console.log("✅ Connected to MSSQL database");
+  }
+  return pool;
+}
+
+export async function query(sqlQuery) {
+  const connectionPool = await getPool();
   try {
-    const result = await client.query(sql);
-    return result.rows;
-  } finally {
-    client.release(); // always return the connection to the pool
+    const result = await connectionPool.request().query(sqlQuery);
+    return result.recordset;
+  } catch (err) {
+    console.error("MSSQL Query Error:", err);
+    throw err;
   }
 }
 
-/**
- * Safely close the pool — call this at the end of scripts.
- */
-export async function closePool(): Promise<void> {
-  await pool.end();
+export async function closePool() {
+  if (pool) {
+    await pool.close();
+    pool = null;
+    console.log("✅ MSSQL connection closed");
+  }
 }
+
+process.on("SIGINT", async () => {
+  await closePool();
+  process.exit(0);
+});
