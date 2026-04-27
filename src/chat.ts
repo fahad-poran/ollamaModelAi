@@ -10,7 +10,7 @@ import "dotenv/config";
 import { ChatOllama } from "@langchain/ollama";
 import { HumanMessage } from "@langchain/core/messages";
 
-const baseUrl = process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434";
+const baseUrl = process.env.OLLAMA_BASE_URL ?? "http://192.168.0.122:11434";
 const model = process.env.OLLAMA_MODEL ?? "llama3.2";
 
 console.log(`Testing connection to Ollama model: ${model}`);

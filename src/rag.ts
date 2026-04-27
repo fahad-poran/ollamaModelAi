@@ -27,7 +27,7 @@ const MAX_LEAVE_REQUESTS = 100;
 
 const llm = new ChatOllama({
   model: process.env.OLLAMA_MODEL ?? "llama3.2",
-  baseUrl: process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434",
+  baseUrl: process.env.OLLAMA_BASE_URL ?? "http://192.168.0.122:11434",
   temperature: 0.2,
 });
 
